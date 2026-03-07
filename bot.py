@@ -10,7 +10,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 # ─── Configuración ────────────────────────────────────────────────
 
 TELEGRAM_TOKEN = os.environ[8781787874:AAEnwgK03RWozmKbm0yHwKmjriZLrFRwMmk]
-CHAT_ID = os.environ[“CHAT_ID”]
+CHAT_ID = os.environ[5039054965]
 NOTIFY_HOUR = int(os.getenv(“NOTIFY_HOUR”, “19”)) # 19 = 7 pm
 NOTIFY_MINUTE = int(os.getenv(“NOTIFY_MINUTE”, “0”))
 TIMEZONE = os.getenv(“TIMEZONE”, “America/Mexico_City”)

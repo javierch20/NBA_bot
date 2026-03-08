@@ -16,7 +16,7 @@ NOTIFY_MINUTE = int(os.getenv("NOTIFY_MINUTE", "0"))
 TIMEZONE = os.getenv("TIMEZONE", "America/Mexico_City")
 
 logging.basicConfig(level=logging.INFO)
-log = logging.getLogger(**name**)
+log = logging.getLogger("nba_bot")
 
 # ─── Obtener resultados de la NBA ─────────────────────────────────
 

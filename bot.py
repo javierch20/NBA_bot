@@ -72,7 +72,7 @@ f"Tu Chat ID es: `{chat_id}`\n\n"
 f"Comandos disponibles:\n"
 f"/resultados – Ver resultados ahora mismo\n"
 f"/estado – Ver configuración actual",
-parse_mode=“Markdown”
+parse_mode="Markdown"
 )
 
 async def cmd_resultados(update, context: ContextTypes.DEFAULT_TYPE):

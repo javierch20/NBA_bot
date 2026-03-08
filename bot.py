@@ -1,7 +1,9 @@
 import os
 import asyncio
 import logging
+import threading
 from datetime import date
+from http.server import HTTPServer, BaseHTTPRequestHandler
 import httpx
 from telegram.ext import Application, CommandHandler
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -11,21 +13,38 @@ CHAT_ID = os.environ["CHAT_ID"]
 NOTIFY_HOUR = int(os.getenv("NOTIFY_HOUR", "19"))
 NOTIFY_MINUTE = int(os.getenv("NOTIFY_MINUTE", "0"))
 TIMEZONE = os.getenv("TIMEZONE", "America/Mexico_City")
+BALLDONTLIE_KEY = os.environ["BALLDONTLIE_KEY"]
+PORT = int(os.getenv("PORT", "8080"))
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("nba_bot")
 
 
+class HealthHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"OK")
+    def log_message(self, format, *args):
+        pass
+
+
+def run_health_server():
+    server = HTTPServer(("0.0.0.0", PORT), HealthHandler)
+    server.serve_forever()
+
+
 async def get_nba_results():
     today = date.today().strftime("%Y-%m-%d")
-    url = "https://www.balldontlie.io/api/v1/games?dates[]=" + today + "&per_page=30"
-    client = httpx.AsyncClient(timeout=10)
-    resp = await client.get(url)
+    url = "https://api.balldontlie.io/v1/games?dates[]=" + today + "&per_page=30"
+    headers = {"Authorization": BALLDONTLIE_KEY}
+    client = httpx.AsyncClient(timeout=15)
+    resp = await client.get(url, headers=headers)
     await client.aclose()
     data = resp.json()
     games = data.get("data", [])
     if not games:
-        return "No hubo partidos hoy o aun no hay datos disponibles."
+        return "No hay partidos NBA hoy (" + today + ")."
     lines = ["NBA - " + today + "\n"]
     for g in games:
         home = g["home_team"]["abbreviation"]
@@ -81,6 +100,9 @@ async def cmd_estado(update, context):
 
 
 async def main():
+    threading.Thread(target=run_health_server, daemon=True).start()
+    log.info("Health server corriendo en puerto " + str(PORT))
+
     app = Application.builder().token(TELEGRAM_TOKEN).build()
     app.add_handler(CommandHandler("start", cmd_start))
     app.add_handler(CommandHandler("resultados", cmd_resultados))

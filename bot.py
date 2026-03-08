@@ -89,7 +89,7 @@ f"⚙️ *Configuración actual:*\n"
 f"• Hora de notificación: {NOTIFY_HOUR:02d}:{NOTIFY_MINUTE:02d}\n"
 f"• Zona horaria: {TIMEZONE}\n"
 f"• Chat ID configurado: `{CHAT_ID}`",
-parse_mode=“Markdown”
+parse_mode="Markdown"
 )
 
 # ─── Main ─────────────────────────────────────────────────────────
